@@ -1,0 +1,6 @@
+rapper version 0.1 - wrapping plain text
+
+Usage: rapper [options...] <inputfile>
+  -n <N>          Wrap text at N columns (defualt: 72)
+  -o <file>       Write output to file instead of terminal
+  -v              Print diagnostic information in verbose mode
