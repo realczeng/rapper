@@ -1,5 +1,6 @@
 ---
 BasedOnStyle: LLVM
 IndentWidth: 2
+PointerAlignment: Left
 ---
 

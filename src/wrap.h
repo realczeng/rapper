@@ -18,4 +18,5 @@
  *                                                                        *
  **************************************************************************/
 
-int wrap_simple(char *filepath, char *ovalue, long MAXLINELEN, int vflag);
+int wrap_simple(char* filepath, char* ovalue, long MAXLINELEN, int vflag);
+int wrap_dumbhyph(char* filepath, char* ovalue, long MAXLINELEN, int vflag);

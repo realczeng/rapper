@@ -30,20 +30,24 @@
 #define DEFAULT_MAX_LINE_LEN 72
 
 static int vflag = 0;
-static char *nvalue = NULL;
-static char *ovalue = NULL;
+static int hflag = 0;
+static char* nvalue = NULL;
+static char* ovalue = NULL;
 static long MAXLINELEN = DEFAULT_MAX_LINE_LEN;
 
-static char *filepath = NULL;
+static char* filepath = NULL;
 
-static void handle_opt(int, char **);
+static void handle_opt(int, char**);
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   handle_opt(argc, argv);
-  return wrap_simple(filepath, ovalue, MAXLINELEN, vflag);
+  if (hflag == 1)
+    return wrap_dumbhyph(filepath, ovalue, MAXLINELEN, vflag);
+  else
+    return wrap_simple(filepath, ovalue, MAXLINELEN, vflag);
 }
 
-static void handle_opt(int argc, char **argv) {
+static void handle_opt(int argc, char** argv) {
   if (argc == 1) {
     usage(1);
     exit(EXIT_FAILURE);
@@ -52,8 +56,11 @@ static void handle_opt(int argc, char **argv) {
   int c;
   // int opterr = 0;
 
-  while ((c = getopt(argc, argv, "vn:o:")) != -1) {
+  while ((c = getopt(argc, argv, "hvn:o:")) != -1) {
     switch (c) {
+    case 'h':
+      hflag = 1;
+      break;
     case 'v':
       vflag = 1;
       break;
@@ -99,8 +106,9 @@ static void handle_opt(int argc, char **argv) {
     if (ovalue == NULL) {
       puts("Output will be written to STDIN.");
     } else {
-      printf("Output will be saved to %s.", ovalue);
+      printf("Output will be saved to %s.\n", ovalue);
     }
+    printf("%s mode is on.", hflag == 1 ? "Dumb hyphenation" : "Simple");
     puts("");
     puts("===== START =====");
   }
