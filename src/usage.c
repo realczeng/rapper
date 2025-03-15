@@ -26,6 +26,7 @@ void usage(int print_header) {
     puts("");
   }
   puts("Usage: rapper [options...] <inputfile>");
+  puts("  -h              Use dumb hyphenation mode");
   puts("  -n <N>          Wrap text at N columns (defualt: 72)");
   puts("  -o <file>       Write output to file instead of terminal");
   puts("  -v              Print diagnostic information in verbose mode");
