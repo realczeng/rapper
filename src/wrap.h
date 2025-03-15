@@ -1,5 +1,5 @@
 /**************************************************************************
- *   usage.h  --  This file is part of rapper.                            *
+ *   wrap.h  --  This file is part of rapper.                             *
  *                                                                        *
  *   Copyright (C) 2025 Chen Zeng                                         *
  *                                                                        *
@@ -18,4 +18,4 @@
  *                                                                        *
  **************************************************************************/
 
-void usage(int print_header);
+int wrap_simple(char *filepath, char *ovalue, long MAXLINELEN, int vflag);

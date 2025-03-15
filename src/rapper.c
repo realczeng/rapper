@@ -25,18 +25,29 @@
 #include <unistd.h>
 
 #include "usage.h"
+#include "wrap.h"
 
 #define DEFAULT_MAX_LINE_LEN 72
 
+static int vflag = 0;
+static char *nvalue = NULL;
+static char *ovalue = NULL;
+static long MAXLINELEN = DEFAULT_MAX_LINE_LEN;
+
+static char *filepath = NULL;
+
+static void handle_opt(int, char **);
+
 int main(int argc, char **argv) {
+  handle_opt(argc, argv);
+  return wrap_simple(filepath, ovalue, MAXLINELEN, vflag);
+}
+
+static void handle_opt(int argc, char **argv) {
   if (argc == 1) {
     usage(1);
-    return EXIT_FAILURE;
+    exit(EXIT_FAILURE);
   }
-
-  int vflag = 0;
-  char *nvalue = NULL;
-  char *ovalue = NULL;
 
   int c;
   // int opterr = 0;
@@ -59,13 +70,12 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Unknown option `-%c'.\n", optopt);
       else
         fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
-      return 1;
+      exit(EXIT_FAILURE);
     default:
       abort();
     }
   }
 
-  long MAXLINELEN = DEFAULT_MAX_LINE_LEN;
   if (nvalue != NULL) {
     MAXLINELEN = strtol(nvalue, NULL, 10);
   }
@@ -73,18 +83,9 @@ int main(int argc, char **argv) {
   if (optind >= argc) {
     puts("ERROR: no input file.");
     usage(0);
-    return EXIT_FAILURE;
+    exit(EXIT_FAILURE);
   }
-
-  char *filepath = argv[optind];
-
-  FILE *f_input = fopen(filepath, "r");
-  char *readbuffer = malloc(2048 * sizeof(char));
-
-  FILE *f_output = stdout;
-  if (ovalue != NULL) {
-    f_output = fopen(ovalue, "w");
-  }
+  filepath = argv[optind];
 
   if (vflag == 1) {
     puts("Verbose mode is on.");
@@ -100,62 +101,7 @@ int main(int argc, char **argv) {
     } else {
       printf("Output will be saved to %s.", ovalue);
     }
+    puts("");
+    puts("===== START =====");
   }
-
-  int originallinec = 0, newlinec = 0;
-
-  for (; fgets(readbuffer, 2048, f_input); originallinec++) {
-    // printf("===== Line %d =====\n", i);
-
-    int linelen = 0;
-    int linewordc = 0;
-
-    for (char *seg = strtok(readbuffer, " "); seg != NULL;
-         seg = strtok(NULL, " ")) {
-      // N of characters in a word.
-      int wordlen = (int)strlen(seg);
-
-      // The first word is printed regardless of the length.
-      if (linewordc == 0) {
-        fprintf(f_output, "%s", seg);
-        linelen += wordlen;
-        linewordc++;
-        newlinec++;
-        continue;
-      }
-
-      // If current line length + next word length <= MAXLINELEN, print the word
-      // preceded by a space. No space if this is the first word of the line.
-      // Line word count increases by 1, and line length increases by word
-      // length, plus 1 if space is added.
-      // Else, a new line is added and both counters are reset.
-      if (linelen + wordlen + 1 <= MAXLINELEN) {
-        fprintf(f_output, " %s", seg);
-        linelen += wordlen + 1;
-        linewordc++;
-      } else {
-        // Current line length is printed.
-        // printf("\n");
-        // for (int j = 0; j < linelen - 1; j++)
-        //   printf(" ");
-        // printf("^\n");
-        // for (int j = 0; j < linelen - 1; j++)
-        //   printf(" ");
-        // printf("%d\n", linelen);
-        fprintf(f_output, "\n%s", seg);
-        linelen = wordlen;
-        newlinec++;
-        linewordc = 1;
-      }
-    }
-
-    // printf("\n");
-  }
-  printf("\n");
-
-  if (vflag == 1)
-    printf("\nOriginal N lines: %d\nNew N lines:%d\n", originallinec, newlinec);
-
-  fclose(f_input);
-  fclose(f_output);
 }
