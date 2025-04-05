@@ -18,16 +18,7 @@
  *                                                                        *
  **************************************************************************/
 
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-#include "usage.h"
-#include "wrap.h"
-
-#define DEFAULT_MAX_LINE_LEN 72
+#include "rapper.h"
 
 static int vflag = 0;
 static int hflag = 0;

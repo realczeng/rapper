@@ -2,3 +2,4 @@
 rapper
 obj/
 .DS_Store
+builddir/
